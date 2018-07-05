@@ -33,6 +33,10 @@ public class UsuarioDAO {
             + " id, nome, email, senha, telefone, dataDeNascimento"
             + " from usuario"
             + " where email=?";
+    
+    private final static String ALTERAR_USUARIO_PELO_ID_SQL = "update usuario"
+            + " set nome=?, email=?, senha=?, telefone=?, dataDeNascimento=?"
+            + " where id=?";
 
     @Resource(name = "jdbc/Bolao2DBLocal")
     DataSource dataSource;
@@ -96,6 +100,23 @@ public class UsuarioDAO {
                     return null;
                 }
             }
+        }
+    }
+    
+    public boolean atualizarUsuario(Usuario u) throws SQLException {
+        try (Connection con = dataSource.getConnection();
+            PreparedStatement ps = con.prepareStatement(ALTERAR_USUARIO_PELO_ID_SQL);) {
+            ps.setString(1, u.getNome());
+            ps.setString(2, u.getEmail());
+            ps.setString(3, u.getSenha());
+            ps.setString(4, u.getTelefone());
+            ps.setDate(5, new java.sql.Date(u.getDataDeNascimento().getTime()));
+            ps.setInt(6, u.getId());
+            
+            ps.executeUpdate();
+            ps.close();
+            
+            return true;
         }
     }
 }
