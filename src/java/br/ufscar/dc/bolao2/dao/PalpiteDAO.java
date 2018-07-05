@@ -39,6 +39,14 @@ public class PalpiteDAO {
             + " union"
             + " select vice as selecao from palpite) selecoes"
             + " order by upper(selecao)";
+    
+/*    private final static String LISTAR_PALPITES_EMAIL_SQL = "select"
+            + " distinct(palpiteiro) from"
+            + " (select campeao as selecao from palpite"
+            + " union"
+            + " select vice as selecao from palpite) selecoes"
+            + " order by upper(selecao)";
+*/
 
     @Resource(name = "jdbc/Bolao2DBLocal")
     DataSource dataSource;
@@ -93,6 +101,33 @@ public class PalpiteDAO {
                 while (rs.next()) {
                     String s = rs.getString("selecao");
                     ret.add(s);
+                }
+            }
+        }
+        return ret;
+    }
+    
+    public List<Palpite> listarPalpitesPorEmail(String email) throws SQLException {
+        List<Palpite> ret = new ArrayList<>();
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement ps = con.prepareStatement(LISTAR_PALPITES_SQL)) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    if(rs.getString("email").equals(email)) {
+                        Palpite p = new Palpite();
+                        Usuario u = new Usuario();
+                        p.setId(rs.getInt("palpiteId"));
+                        p.setCampeao(rs.getString("campeao"));
+                        p.setVice(rs.getString("vice"));
+                        u.setId(rs.getInt("usuarioId"));
+                        u.setNome(rs.getString("nome"));
+                        u.setEmail(rs.getString("email"));
+                        u.setTelefone(rs.getString("telefone"));
+                        u.setDataDeNascimento(new Date(rs.getDate("dataDeNascimento").getTime()));
+                        p.setPalpiteiro(u);
+                        ret.add(p);
+                    }
                 }
             }
         }

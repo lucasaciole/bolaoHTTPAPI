@@ -16,6 +16,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -60,7 +61,20 @@ public class ServicosPalpite {
     }
 
 
-
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/usuario")
+    public Response getPalpitePorEmail(@QueryParam("email") String email) {
+        simularDemora();
+        try {
+            return Response.ok(palpiteDao.listarPalpitesPorEmail(email)).build();
+        } catch (SQLException ex) {
+            Logger.getLogger(ServicosPalpite.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.serverError().build();
+        }
+    }
+    
+    
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
