@@ -133,4 +133,19 @@ public class PalpiteDAO {
         }
         return ret;
     }
+    
+    public int returnQuantidadePalpitesPorEmail(String email) throws SQLException{
+        int counter = 0;
+        try (Connection con = dataSource.getConnection();
+                PreparedStatement ps = con.prepareStatement(LISTAR_PALPITES_SQL)) {
+            try (ResultSet rs = ps.executeQuery()){
+                while(rs.next()){
+                    if(rs.getString("email").equals(email)){
+                        counter++;
+                    }
+                }
+            }
+        }
+        return counter;
+    }
 }
