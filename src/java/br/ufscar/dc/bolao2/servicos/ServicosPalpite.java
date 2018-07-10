@@ -74,7 +74,18 @@ public class ServicosPalpite {
         }
     }
     
-    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/quantidade")
+    public Response getQuantidadePalpitePorEmail(@QueryParam("email") String email) {
+        simularDemora();
+        try{
+            return Response.ok(palpiteDao.returnQuantidadePalpitesPorEmail(email)).build();
+        } catch (SQLException ex) {
+            Logger.getLogger(ServicosPalpite.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.serverError().build();
+        }
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
